@@ -1,0 +1,43 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "aws-teardown"
+dynamic = ["version"]
+description = "Find the AWS resources your tutorial left running, with a cost estimate and the command to delete each one."
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.9"
+authors = [{ name = "Ali Ahmad" }]
+keywords = ["aws", "cost", "cleanup", "free-tier", "finops", "students"]
+classifiers = [
+  "Environment :: Console",
+  "Intended Audience :: Developers",
+  "Intended Audience :: Education",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3",
+  "Topic :: System :: Systems Administration",
+]
+dependencies = ["boto3>=1.28"]
+
+[project.optional-dependencies]
+dev = ["pytest>=7", "moto[ec2,elb,elbv2,rds,eks,secretsmanager,kms,sagemaker,sts]>=5", "ruff"]
+
+[project.scripts]
+aws-teardown = "aws_teardown.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/holialli/aws-teardown"
+Issues = "https://github.com/holialli/aws-teardown/issues"
+
+[tool.hatch.version]
+path = "src/aws_teardown/__init__.py"
+
+[tool.ruff]
+line-length = 120
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP"]
+# Line length is left to `ruff format`; the long lines are the AWS CLI command strings.
+ignore = ["E501"]
