@@ -57,6 +57,19 @@ aws-teardown diff          # shows only what the tutorial created
 
 `diff` ignores everything that was there before, so you get a clean teardown list for just that tutorial instead of having to work out which of your resources are which. The snapshot is a small JSON file in the current folder (`.aws-teardown-snapshot.json`); it only stores resource IDs.
 
+## Try it without an AWS account
+
+[`examples/try_without_aws.py`](examples/try_without_aws.py) runs the whole snapshot → tutorial → diff flow against [moto](https://github.com/getmoto/moto)'s local fake AWS, so you can see what it does before pointing it at a real account:
+
+```bash
+pip install git+https://github.com/holialli/aws-teardown "moto[server]"
+python examples/try_without_aws.py
+```
+
+It starts a moto server on localhost, creates one server that "already existed", takes a snapshot, then creates what a VPC tutorial typically leaves behind (a NAT gateway with its Elastic IP, an instance, a spare volume, a secret). `diff` lists only those six; `scan` also shows the server that was already there. Nothing is sent to AWS and it needs no credentials.
+
+The same trick works with your own experiments: point `AWS_ENDPOINT_URL` at a moto or LocalStack server and `aws-teardown` scans that instead of AWS.
+
 ## What it looks for
 
 | Type | Rough monthly cost | Why it's on the list |
@@ -100,6 +113,8 @@ pytest
 ```
 
 Tests run against [moto](https://github.com/getmoto/moto), so no AWS account is needed.
+
+So far it has only been tested against moto, which is close to real AWS but not identical. If you run it on a real account and something is missing, mislabelled or priced wrong, please open an issue with the output (redact the account ID).
 
 ## Contributing
 
